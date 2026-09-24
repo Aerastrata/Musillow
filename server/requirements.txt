@@ -1,0 +1,19 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+sqlalchemy[asyncio]>=2.0
+asyncpg>=0.29
+psycopg2-binary>=2.9      # sync driver used by Alembic
+alembic>=1.13
+pydantic>=2.6
+pydantic-settings>=2.2
+pyjwt>=2.8
+bcrypt>=4.1
+cryptography>=42
+httpx>=0.27
+python-multipart>=0.0.9  # UploadFile parsing for uploads (covers, audio clips)
+# Keyless acoustic song recognition for the "what's playing?" button. Needs no
+# account or API key, which keeps Musillow clonable without third-party signups.
+shazamio>=0.8,<0.9
+
+# Phase 3+ (recommendation patches):
+# troi>=2024.0

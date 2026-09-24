@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Musillow icon background: the logo's dark radial gradient, full-bleed
+     (the launcher applies the adaptive mask / rounded corners itself). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="500"
+    android:viewportHeight="500">
+    <path android:pathData="M0,0h500v500h-500z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="250"
+                android:centerY="175"
+                android:gradientRadius="375"
+                android:startColor="#FF241F30"
+                android:endColor="#FF0F0D13" />
+        </aapt:attr>
+    </path>
+</vector>

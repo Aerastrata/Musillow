@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: musillow-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-musillow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-musillow}
+      POSTGRES_DB: ${POSTGRES_DB:-musillow}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-musillow}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: musillow-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-musillow}:${POSTGRES_PASSWORD:-musillow}@db:5432/${POSTGRES_DB:-musillow}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      # slskd (Soulseek) — fulfils download requests.
+      SLSKD_URL: ${SLSKD_URL:-http://host.docker.internal:5030}
+      SLSKD_API_KEY: ${SLSKD_API_KEY:-}
+    # Lets the container reach slskd, which is published on the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Move finished Soulseek downloads into the Navidrome library.
+      - ${DOWNLOADS_DIR:-/mnt/music/downloads}:/downloads
+      - ${LIBRARY_DIR:-/mnt/music/library}:/library
+      # Custom playlist cover images (Navidrome has no cover-upload API).
+      - covers:/data/covers
+      # Account profile pictures.
+      - avatars:/data/avatars
+    ports:
+      # Reachable over your NetBird overlay (bind to the host; NetBird routes it).
+      - "${API_PORT:-8080}:8080"
+    networks:
+      # 'default' (server_default) reaches the db; 'npm' lets Nginx Proxy
+      # Manager reach this container directly as musillow-api:8080.
+      - default
+      - npm
+    restart: unless-stopped
+
+networks:
+  npm:
+    external: true
+    name: npm_default
+
+volumes:
+  pgdata:
+  covers:
+  avatars:

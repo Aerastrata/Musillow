@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The media-notification icons are never named in code or XML: audio_service
+     resolves them at runtime from the strings passed to JustAudioBackground.init
+     (androidNotificationIcon) and to MediaControl.custom (androidIcon), via
+     Resources.getIdentifier. The release build's resource shrinker therefore
+     sees them as unused and strips them, getIdentifier returns 0, and
+     PlaybackStateCompat throws "You must specify an icon resource id to build a
+     CustomAction" out of AudioService.setState() — which aborts before
+     startForeground(), so no foreground service and no notification are ever
+     created and playback dies the moment the app is backgrounded. Debug builds
+     don't shrink resources, which is why this only ever showed up in release. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification,@drawable/ic_notif_*" />
